@@ -37,7 +37,7 @@ function love.update(dt)
 		T = 0
 	end
 
-	Cam:lookAt(Player.body:getX(),Player.body:getY())
+	Cam:lookAt(Player.body:getX(),800)
 end
 
 function love.draw()
