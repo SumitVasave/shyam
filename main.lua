@@ -24,7 +24,8 @@ function love.load()
 	pipe={}
 	T=0
     -- Camera
-	Camera=require "lib/Camera"
+	Camera=require "lib.camera"
+    -- require "lib.camera"
 	Cam=Camera()
 end
 
