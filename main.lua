@@ -1,28 +1,31 @@
 
 function love.load()
+	Fun=require "lib.myfunctions"
 	--window
-	love.window.setMode(720,1600,{resizable=false,vsync=true})
+    -- 720,1600
+	Game={}
+	Player={}
+	World={}
+	Screenx=360
+	Screeny=640
+	love.window.setMode(Screenx,Screeny,{resizable=false,vsync=true})
 
-	Player = {}
-	Player.x = 100
-	Player.y = 100
+	Player.x = 200
+	Player.y = 200
 	Player.texture = love.graphics.newImage("sprites/player.png")
 	-- world
-	World=love.physics.newWorld(10, 250)
+	World.world=love.physics.newWorld(100, 0)
 
 	-- player physics body
-	Player.body=love.physics.newBody(World,Player.x,Player.y,"dynamic")
+	Player.body=love.physics.newBody(World.world,Player.x,Player.y,"dynamic")
 	Player.shape=love.physics.newCircleShape(25)
 	Player.fixture=love.physics.newFixture(Player.body,Player.shape)
 	-- ground physics body
-	Ground={}
-	Ground.body=love.physics.newBody(World,400,550,"static")
-	Ground.shape=love.physics.newRectangleShape(800,50)
-	Ground.fixture=love.physics.newFixture(Ground.body,Ground.shape)
+	World.Ground={}
+	World.Ground.body=love.physics.newBody(World.world,400,1600,"static")
+	World.Ground.shape=love.physics.newRectangleShape(800,50)
+	World.Ground.fixture=love.physics.newFixture(World.Ground.body,World.Ground.shape)
 
-	--pipe
-	pipe={}
-	T=0
     -- Camera
 	Camera=require "lib.camera"
     -- require "lib.camera"
@@ -30,28 +33,29 @@ function love.load()
 end
 
 function love.update(dt)
-	World:update(dt)
+	World.world:update(dt)
 	Player.x,Player.y=Player.body:getPosition()
-	T = T + dt
-	if T >= 2 then
-		T = 0
-	end
 
-	Cam:lookAt(Player.body:getX(),800)
+	if love.keyboard.isDown("p") then
+		print(love.math.random(50,Screeny-50))
+	end
+	Cam:lookAt(Player.body:getX(),300)
 end
 
 function love.draw()
+	Pipegen()
 	love.graphics.print(string.format("Position(x,y):(%s,%s)",Player.x,Player.y),10,10)
-
+	
 	Cam:attach()
-
-		-- love.graphics.rectangle("fill",Player.x,Player.y,50,50)
-		-- love.graphics.circle("fill",Player.x-50,Player.y-50,0,0.25,0.25)
-		love.graphics.draw(Player.texture,Player.x-75,Player.y-75,0,0.25,0.25)
-		
-		love.graphics.rectangle("fill",Ground.body:getX()-400,Ground.body:getY(),800,50)
-
+	
+	-- love.graphics.rectangle("fill",Player.x,Player.y,50,50)
+	-- love.graphics.circle("fill",Player.x-50,Player.y-50,0,0.25,0.25)
+	love.graphics.draw(Player.texture,Player.x-75,Player.y-75,0,0.25,0.25)
+	
+	love.graphics.rectangle("fill",World.Ground.body:getX()-400,World.Ground.body:getY(),800,50)
+	
 	Cam:detach()
+	Fun.drawphysics()
 end
 
 function love.keypressed(key)
@@ -65,4 +69,19 @@ function love.keypressed(key)
 	if key== "f" then
 		love.window.setFullscreen(true)
 	end
+end
+
+function love.mousepressed(x, y, button, istouch)
+	-- istouch=true
+    if (button == 1 or istouch==true) then
+		Player.body:applyLinearImpulse(0,-500)
+    end
+end
+
+
+function Pipegen()
+	if Player.x>0 and Player.x%200==0 then
+		print("pile")
+	end
+	
 end
